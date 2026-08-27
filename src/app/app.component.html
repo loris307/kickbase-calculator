@@ -9,7 +9,26 @@
   </div>
 }
 
-@if (!apiService.isLoggedIn) {
+@if (errorService.errorMessage(); as errorMsg) {
+  <div class="error-banner shadow">
+    <div
+      class="d-flex justify-content-between align-items-center px-3 py-2 bg-danger text-white rounded"
+    >
+      <span class="fw-semibold small d-flex align-items-center">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        {{ errorMsg }}
+      </span>
+      <button
+        type="button"
+        class="btn-close btn-close-white btn-sm ms-3"
+        aria-label="Schließen"
+        (click)="errorService.clearError()"
+      ></button>
+    </div>
+  </div>
+}
+
+@if (!apiService.isLoggedIn()) {
   <div>
     <app-login (login)="login($event)" [doLogin]="doLogin"></app-login>
     <div class="support-card mt-4 mb-4">
@@ -25,7 +44,7 @@
   </div>
 }
 
-@if (apiService.isLoggedIn) {
+@if (apiService.isLoggedIn()) {
   <div class="app-topbar">
     <span
       class="cursor-pointer text-muted extra-small fw-semibold"
