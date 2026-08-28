@@ -82,6 +82,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public currentGift: KickbaseGift | null = null;
   public selectedLeague: number | null = null;
   public achievementsDisabled = false;
+  public includeAchievements = true;
 
   public readonly sorting_default = -1;
   public readonly sorting_mw_desc = 1;
@@ -323,7 +324,11 @@ export class AppComponent implements OnInit, AfterViewInit {
         return;
       }
 
+      const leagueOverview = await firstValueFrom(this.apiService.getLeagueOverview(league.id));
+      league.amd = leagueOverview.amd;
+
       this.achievementsDisabled = league.amd ?? false;
+      this.includeAchievements = !this.achievementsDisabled;
 
       const lineUp = await firstValueFrom(this.apiService.getLineup(newValue));
 
@@ -378,6 +383,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     console.log(newValue);
   }
 
+  onIncludeAchievementsChanged() {
+    this.refreshGroups();
+  }
+
   onLoadAllDetails = async (refresh: boolean) => {
     if (this.selectedLeague === null) {
       return;
@@ -430,7 +439,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.amountValue,
       this.includeMinusMarketValues,
       this.dayUntilFriday,
-      this.achievementsDisabled,
+      !this.includeAchievements,
     );
   }
 
@@ -499,7 +508,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.amountValue,
       this.includeMinusMarketValues,
       this.dayUntilFriday,
-      this.achievementsDisabled,
+      !this.includeAchievements,
     );
     this.sortCurrentPlayers();
   }
